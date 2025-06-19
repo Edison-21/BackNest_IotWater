@@ -1,0 +1,423 @@
+{
+  "info": {
+    "name": "IoT Water Management API",
+    "description": "Collection for testing IoT Water Management System with encrypted personal data",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{access_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3003",
+      "type": "string"
+    },
+    {
+      "key": "access_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"email\": \"test@example.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "register"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 201) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', response.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "login"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('access_token', response.access_token);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "IoT Management",
+      "item": [
+        {
+          "name": "Gateways",
+          "item": [
+            {
+              "name": "Create Gateway",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Gateway Principal\",\n  \"macAddress\": \"00:1B:44:11:3A:B7\",\n  \"ipAddress\": \"192.168.1.100\",\n  \"location\": \"Edificio Principal - Planta Baja\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/gateways",
+                  "host": ["{{base_url}}"],
+                  "path": ["gateways"]
+                }
+              }
+            },
+            {
+              "name": "Get All Gateways",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/gateways",
+                  "host": ["{{base_url}}"],
+                  "path": ["gateways"]
+                }
+              }
+            },
+            {
+              "name": "Get Gateway by ID",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/gateways/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["gateways", "1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Clients",
+          "item": [
+            {
+              "name": "Create Client (Encrypted Data)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"name\": \"Juan Carlos\",\n  \"lastName\": \"Pérez González\",\n  \"identificationNumber\": \"1234567890\",\n  \"identificationType\": \"cedula\",\n  \"email\": \"juan.perez@email.com\",\n  \"phone\": \"+593987654321\",\n  \"address\": \"Av. Principal 123, Quito, Ecuador\",\n  \"sectorId\": 1\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/clients",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients"]
+                }
+              }
+            },
+            {
+              "name": "Get All Clients (Shows Encrypted Data)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/clients",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients"]
+                }
+              }
+            },
+            {
+              "name": "Get Client by ID",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/clients/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients", "1"]
+                }
+              }
+            },
+            {
+              "name": "Update Client",
+              "request": {
+                "method": "PATCH",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"phone\": \"+593999888777\",\n  \"address\": \"Nueva Dirección 456, Quito, Ecuador\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/clients/1",
+                  "host": ["{{base_url}}"],
+                  "path": ["clients", "1"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Nodes",
+          "item": [
+            {
+              "name": "Get All Nodes",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/nodes",
+                  "host": ["{{base_url}}"],
+                  "path": ["nodes"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Meters",
+          "item": [
+            {
+              "name": "Get All Meters",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/meters",
+                  "host": ["{{base_url}}"],
+                  "path": ["meters"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Sectors",
+          "item": [
+            {
+              "name": "Get All Sectors",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/sectors",
+                  "host": ["{{base_url}}"],
+                  "path": ["sectors"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Consumptions",
+          "item": [
+            {
+              "name": "Get All Consumptions",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/consumptions",
+                  "host": ["{{base_url}}"],
+                  "path": ["consumptions"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Collections",
+          "item": [
+            {
+              "name": "Get All Collections",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/collections",
+                  "host": ["{{base_url}}"],
+                  "path": ["collections"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Valves",
+          "item": [
+            {
+              "name": "Get All Valves",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/valves",
+                  "host": ["{{base_url}}"],
+                  "path": ["valves"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Chatbot Management",
+      "item": [
+        {
+          "name": "Chats",
+          "item": [
+            {
+              "name": "Get All Chats (Encrypted Data)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/chats",
+                  "host": ["{{base_url}}"],
+                  "path": ["chats"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Chat Details",
+          "item": [
+            {
+              "name": "Get All Chat Details",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/chat-details",
+                  "host": ["{{base_url}}"],
+                  "path": ["chat-details"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Processes",
+          "item": [
+            {
+              "name": "Get All Processes",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/processes",
+                  "host": ["{{base_url}}"],
+                  "path": ["processes"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Tags",
+          "item": [
+            {
+              "name": "Get All Tags",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/tags",
+                  "host": ["{{base_url}}"],
+                  "path": ["tags"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Message Responses",
+          "item": [
+            {
+              "name": "Get All Message Responses",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/message-responses",
+                  "host": ["{{base_url}}"],
+                  "path": ["message-responses"]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "name": "Conversation History",
+          "item": [
+            {
+              "name": "Get All Conversation History (Encrypted)",
+              "request": {
+                "method": "GET",
+                "url": {
+                  "raw": "{{base_url}}/conversation-history",
+                  "host": ["{{base_url}}"],
+                  "path": ["conversation-history"]
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
